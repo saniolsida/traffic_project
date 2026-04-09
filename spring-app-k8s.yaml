@@ -14,9 +14,8 @@ spec:
     spec:
       containers:
         - name: spring-app
-          # 주의: 로컬에 빌드한 이미지를 쿠버네티스가 찾을 수 있게 해야 합니다.
-          image: my-spring-app:v4
-          imagePullPolicy: Never # 로컬 이미지를 우선 사용하도록 설정 (Docker Desktop용)
+          image: saniolsida/my-spring-app:latest
+          imagePullPolicy: Always # 로컬 이미지를 우선 사용하도록 설정 (Docker Desktop용)
           ports:
             - containerPort: 8080
           env:
