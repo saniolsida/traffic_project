@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # 1. Spring Boot 앱
+  app:
+    build: .
+    container_name: spring-app
+    ports:
+      - "8080:8080"
+    environment:
+      # DB 연결 (컨테이너 이름 'db' 사용)
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/myappdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=password123
+
+      # JPA 테이블 자동 생성
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+
+      # Redis 및 Kafka 연결 (컨테이너 이름 사용)
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      # 프로듀서가 localhost를 찾지 못하도록 강제 주입
+      - SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS=kafka:9092
+    depends_on:
+      - db
+      - redis
+      - kafka
+
+  # 2. MySQL
+  db:
+    image: mysql:8.0
+    container_name: spring-mysql
+    ports:
+      - "4444:3306"
+    environment:
+      - MYSQL_DATABASE=myappdb
+      - MYSQL_ROOT_PASSWORD=password123
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+
+  # 3. Redis
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  # 4. Kafka
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    networks:
+      default:
+        aliases:
+          - localhost # 앱이 혹시라도 localhost를 찾을 때를 대비한 이중 방어막
+    environment:
+      - KAFKA_NODE_ID=1
+      - KAFKA_PROCESS_ROLES=broker,controller
+      - KAFKA_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1

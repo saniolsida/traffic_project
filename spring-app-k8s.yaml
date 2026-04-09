@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-app
+  template:
+    metadata:
+      labels:
+        app: spring-app
+    spec:
+      containers:
+        - name: spring-app
+          # 주의: 로컬에 빌드한 이미지를 쿠버네티스가 찾을 수 있게 해야 합니다.
+          image: my-spring-app:v4
+          imagePullPolicy: Never # 로컬 이미지를 우선 사용하도록 설정 (Docker Desktop용)
+          ports:
+            - containerPort: 8080
+          env:
+            # 1. MySQL 연결 (아까 만든 mysql-service 사용)
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql-service:3306/myappdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "root"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "password123"
+
+            # 2. Redis 연결 (redis-service 사용)
+            - name: SPRING_DATA_REDIS_HOST
+              value: "redis-service"
+            - name: SPRING_DATA_REDIS_PORT
+              value: "6379"
+
+            # 3. Kafka 연결 (kafka-service 사용)
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka-service:9092"
+            # 프로듀서 설정도 확실히 강제 주입
+            - name: SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS
+              value: "kafka-service:9092"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-app-service
+spec:
+  type: LoadBalancer # 외부(내 브라우저)에서 접속 가능하게 설정
+  selector:
+    app: spring-app
+  ports:
+    - protocol: TCP
+      port: 8080      # 외부 노출 포트
+      targetPort: 8080 # 컨테이너 내부 포트
