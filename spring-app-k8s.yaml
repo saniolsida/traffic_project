@@ -57,6 +57,7 @@ metadata:
   name: spring-app-service
 spec:
   type: LoadBalancer # 외부(내 브라우저)에서 접속 가능하게 설정
+  externalTrafficPolicy: Local
   selector:
     app: spring-app
   ports:
