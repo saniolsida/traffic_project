@@ -3,12 +3,12 @@ kind: Deployment
 metadata:
   name: spring-app-deployment
 spec:
-  replicas: 1
+  replicas: 2
   # 1. 롤링 업데이트 전략 설정
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 1 # 배포 중 동시에 중단될 수 있는 Pod의 최대 개수
+      maxUnavailable: 0 # 배포 중 동시에 중단될 수 있는 Pod의 최대 개수
       maxSurge: 1       # 배포 중 새로 생성될 수 있는 Pod의 최대 개수
   selector:
     matchLabels:
