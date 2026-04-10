@@ -25,9 +25,9 @@ spec:
           # 2. 무중단 배포의 핵심: 애플리케이션 준비 상태 확인
           readinessProbe:
             httpGet:
-              path: /actuator/health # Actuator 의존성이 있다면 사용, 없다면 메인 페이지(/) 등 활용
+              path: /
               port: 8080
-            initialDelaySeconds: 30 # 스프링이 뜨는 최소 시간 확보
+            initialDelaySeconds: 30
             periodSeconds: 5
             failureThreshold: 3
           resources:
