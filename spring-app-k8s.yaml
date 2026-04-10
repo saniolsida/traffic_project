@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: spring-app-deployment
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: spring-app
@@ -15,7 +15,7 @@ spec:
       containers:
         - name: spring-app
           image: saniolsida/my-spring-app:latest
-          imagePullPolicy: Always # 로컬 이미지를 우선 사용하도록 설정 (Docker Desktop용)
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
@@ -25,7 +25,10 @@ spec:
             - name: SPRING_DATASOURCE_USERNAME
               value: "root"
             - name: SPRING_DATASOURCE_PASSWORD
-              value: "password123"
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: db-secret
 
             # 2. Redis 연결 (redis-service 사용)
             - name: SPRING_DATA_REDIS_HOST
