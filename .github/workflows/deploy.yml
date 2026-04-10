@@ -49,8 +49,6 @@ jobs:
       # [추가된 로직] Kubernetes 배포 파일의 이미지 태그를 자동으로 치환하고 Push합니다.
       - name: Update Kubernetes resources
         run: |
-          # 1. deployment.yaml 파일 내의 이미지 태그를 새로 생성된 short SHA로 변경
-          # (파일 경로가 루트가 아니라면 k8s/deployment.yaml 처럼 수정하세요)
           sed -i "s|image: ${{ secrets.DOCKERHUB_USERNAME }}/my-spring-app:.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/my-spring-app:${{ steps.vars.outputs.sha_short }}|g" spring-app-k8s.yaml
           
           # 2. Git 설정 (Actions 봇 계정)
@@ -58,6 +56,6 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
           # 3. 변경 사항 커밋 및 푸시
-          git add deployment.yaml
+          git add spring-app-k8s.yaml
           git commit -m "chore: update image tag to ${{ steps.vars.outputs.sha_short }} [skip ci]"
           git push
