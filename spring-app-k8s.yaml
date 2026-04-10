@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: spring-app
-          image: saniolsida/my-spring-app:latest
+          image: saniolsida/my-spring-app:3b84e75
           # 2. 무중단 배포의 핵심: 애플리케이션 준비 상태 확인
           readinessProbe:
             httpGet:
