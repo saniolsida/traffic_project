@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: spring-app
-          image: saniolsida/my-spring-app:4bf14ab
+          image: saniolsida/my-spring-app:3b84e75
           # 2. 무중단 배포의 핵심: 애플리케이션 준비 상태 확인
           readinessProbe:
             httpGet:
@@ -31,8 +31,8 @@ spec:
             failureThreshold: 3
           resources:
             requests:
-              memory: "1Gi"
-              cpu: "500m"
+              memory: "2Gi"
+              cpu: "1000m"
             limits:
               memory: "3Gi"
               cpu: "1000m"
