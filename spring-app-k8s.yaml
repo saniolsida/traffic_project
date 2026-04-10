@@ -16,6 +16,13 @@ spec:
         - name: spring-app
           image: saniolsida/my-spring-app:latest
           imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
           ports:
             - containerPort: 8080
           env:
