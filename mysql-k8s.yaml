@@ -16,7 +16,10 @@ spec:
           image: mysql:8.0
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: "password123"  # 도커 컴포즈와 동일하게 설정
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: db-secret
             - name: MYSQL_DATABASE
               value: "myappdb"
           ports:

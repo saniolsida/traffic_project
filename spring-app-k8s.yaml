@@ -18,15 +18,16 @@ spec:
           imagePullPolicy: Always
           resources:
             requests:
-              memory: "512Mi"
+              memory: "728Mi"
               cpu: "250m"
             limits:
-              memory: "1Gi"
+              memory: "1.2Gi"
               cpu: "500m"
           ports:
             - containerPort: 8080
           env:
-            # 1. MySQL 연결 (아까 만든 mysql-service 사용)
+            - name: JAVA_TOOL_OPTIONS
+              value: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:mysql://mysql-service:3306/myappdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8"
             - name: SPRING_DATASOURCE_USERNAME
